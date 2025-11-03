@@ -39,12 +39,39 @@ def reg_user(req):
 
     return JsonResponse({"error": "Only POST method is allowed"})
 
+
+@csrf_exempt
+def update_user(req, id):
+
+    if req.method in ["PUT", "PATCH"]:
+        try:
+            single_user = UsersTable.objects.get(user_id=id)
+        except UsersTable.DoesNotExist:
+            return HttpResponse("User not found", status=404)
+
+        try:
+            user_data = json.loads(req.body)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+
+        partial_update = True if req.method == "PATCH" else False
+
+        serializer = UserSerializer(single_user, data=user_data, partial=partial_update)
+
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse("User updated successfully", status=200)
+        return JsonResponse(serializer.errors, status=400)
+
+    return HttpResponse("Only PUT and PATCH methods are allowed", status=405)
+
+
 @csrf_exempt   
 def delete_user(req,id):
     if req.method=="DELETE":
         
         try:
-            emp=UsersTable.objects.get(emp_id=id)
+            emp=UsersTable.objects.get(user_id=id)
         except UsersTable.DoesNotExist:
             return HttpResponse("user not found",status=404)
         emp.delete()
