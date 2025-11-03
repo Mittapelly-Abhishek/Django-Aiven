@@ -39,3 +39,16 @@ def reg_user(req):
 
     return JsonResponse({"error": "Only POST method is allowed"})
 
+@csrf_exempt   
+def delete_user(req,id):
+    if req.method=="DELETE":
+        
+        try:
+            emp=UsersTable.objects.get(emp_id=id)
+        except UsersTable.DoesNotExist:
+            return HttpResponse("user not found",status=404)
+        emp.delete()
+        return HttpResponse("user deleted successfully",status=204)
+    else:
+        return HttpResponse("only delete method is allowed")
+
