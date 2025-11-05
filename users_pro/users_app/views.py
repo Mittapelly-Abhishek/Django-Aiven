@@ -5,7 +5,7 @@ from . serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 import json
 import cloudinary
-
+import cloudinary.uploader
 # Create your views here.
 
 def get_users(req):
