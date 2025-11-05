@@ -35,9 +35,14 @@ def reg_user(req):
 
             img_url=cloudinary.uploader.upload(image)
 
-            new_user=UsersTable.objects.create(user_id=id,user_name=name,user_email=email,user_mobile=mobile,profile_pic=img_url["secure_url"])
+            new_user=UsersTable.objects.create(user_id=id,user_name=name,user_email=email,user_mob=mobile,profile_pic=img_url["secure_url"])
 
-            return JsonResponse({"msg":"user created successfully","details":list(new_user.values())})
+            return JsonResponse({"msg":"user created successfully","details":{
+                                 "user_id": new_user.user_id,
+        "user_name": new_user.user_name,
+        "user_email": new_user.user_email,
+        "user_mob": new_user.user_mob,
+        "profile_pic": new_user.profile_pic,}})
         
         except Exception as e:
             return JsonResponse({"error":str(e)},status=400)
