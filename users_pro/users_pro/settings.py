@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users_app'
+    'users_app',
+    'cloudinary'
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEFAULT_FILE_STORAGE='cloudinary_storage.storage.medialCloudinaryStorage'
+
+CLOUDINARY_STORAGE={
+    'CLOUD_NAME':env('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY':env('CLOUDINARY_API_KEY'),
+    'API_SECRET':env('CLOUDINARY_API_SECRECT')
+}

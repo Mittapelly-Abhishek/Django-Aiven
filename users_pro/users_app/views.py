@@ -4,6 +4,7 @@ from . models import UsersTable
 from . serializers import UserSerializer
 from django.views.decorators.csrf import csrf_exempt
 import json
+import cloudinary
 
 # Create your views here.
 
@@ -26,17 +27,20 @@ def get_user(req,id):
 def reg_user(req):
     if req.method == "POST":
         try:
-            user_data=json.loads(req.body)
-            serializer=UserSerializer(data=user_data)
-            if serializer.is_valid():  
-                serializer.save()
-                return JsonResponse({"message": "User created successfully"}, status=201)
-            
-            return JsonResponse(serializer.errors, status=400)
+            id=req.POST.get("user_id")
+            name=req.POST.get("user_name")
+            email=req.POST.get("user_email")
+            mobile=req.POST.get("user_mob")
+            image=req.FILES.get("profile")
 
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status=400)
+            img_url=cloudinary.uploader.upload(image)
 
+            new_user=UsersTable.objects.create(user_id=id,user_name=name,user_email=email,user_mobile=mobile,profile_pic=img_url["secure_url"])
+
+            return JsonResponse({"msg":"user created successfully","details":list(new_user.values())})
+        
+        except Exception as e:
+            return JsonResponse({"error":str(e)},status=400)
     return JsonResponse({"error": "Only POST method is allowed"})
 
 
